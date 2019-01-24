@@ -57,15 +57,16 @@ namespace FileMeta
     /// Static class for parsing and formatting; extracting and embedding metatags
     /// </summary>
     /// <remarks>
-    /// <para>A metatag is like a hashtag in that it can be stored wherever text is stored. However,
-    /// where a hashtag is only a label or keyword, a metatag has a name and a value.
+    /// <para>A metatag is like a hashtag in that it can be embedded wherever text is stored. However,
+    /// where a hashtag is only a label or keyword, a metatag has a name and a value. Thus, metatags
+    /// allow custom metadata to be stored in existing text or textual fields such as comments.
     /// </para>
     /// <para>Examples:</para>
     /// <para>   &author=Brandt</para>
     /// <para>   &subject=MetaTag_Format</para>
     /// <para>   &date=2018-12-17T21:22:05-06:00</para>
     /// <para></para>
-    /// <para>Regular format definition.</para>
+    /// <para>Format Definition:</para>
     /// <para>A metatag starts with an ampersand - just as a hashtag starts with the hash symbol.
     /// </para>
     /// <para>Next comes the name which follows the same standard as a hashtag - it must be composed
@@ -75,13 +76,12 @@ namespace FileMeta
     /// </para>
     /// <para>Next is an equals sign.
     /// </para>
-    /// <para>Next is the value which is a series of any characters except whitespace or the ampersand.
-    /// Whitespace, ampersand, underscore, and the percent character MUST be encoded. A space character
-    /// is encoded as the underscore. All other whitespace, ampersand, underscore, or percent characters
-    /// are encoded as the percent character followed by two hexadecimal digits. The hexadecimal
-    /// the Unicode character code of the encoded character which MUST be in the first 256 characters of
-    /// Unicode. Other Unicode characters are given by their literal value. Notably, all characters to be
-    /// encoded exist in the first 256 Unicode character values.
+    /// <para>Next is the value which is a series of any characters except the ASCII control range (0x00
+    /// to 0x7F), space or the ampersand. Control characters, space, ampersand, underscore, and the percent
+    /// character MUST be encoded. A space character is encoded as the underscore. All other control,
+    /// ampersand, underscore, or percent characters are encoded as the percent character followed by two
+    /// hexadecimal digits. All characters requiring encoding are in the first 256 characters of Unicode, so
+    /// two hexadecimal digits are sufficient. Other Unicode characters are given by their literal value.
     /// </para>
     /// <para>The value encoding is deliberately similar to URL query string encoding. However, in
     /// Metatag encoding, the underscore substitutes for a space whereas in URL query strings, the plus
