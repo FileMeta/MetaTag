@@ -4,8 +4,9 @@ A metatag is like a hashtag in that it can be embedded wherever text is stored. 
 Metatag Examples:
 
 * &author=Brandt
-* &subject=MetaTag_Format
+* &subject="MetaTag Format"
 * &date=2018-12-17T21:22:05-06:00
+* &references=https://en.wikipedia.org/wiki/Metadata
 
 ## Format Definition
 
@@ -15,11 +16,9 @@ Next comes the name which follows the same standard as a hashtag - it must be co
 
 Next is an equals sign.
 
-Next is the value which is a series of any characters except the ASCII control range (0x00 to 0x7F), the space or the ampersand. Control characters, space, ampersand, underscore, and the percent character MUST be encoded. A space character is encoded as the underscore. All other control, ampersand, underscore, or percent characters are encoded as the percent character followed by two hexadecimal digits. All characters requiring encoding are in the first 256 characters of Unicode, so two hexadecimal digits are sufficient. Other Unicode characters are given by their literal value.
+Next is the value which may be in plain or quoted form. In plain form, the value is a series of one or more non-whitespace and non-quote characters. The value is terminated by whitespace or the end of the document.
 
-The value encoding is deliberately similar to URL query string encoding. However, in Metatag encoding, the underscore substitutes for a space whereas in URL query strings, the plus sign substitutes for a space.
-
-The name IS NOT encoded. Valid names are simply limited to the specified character set.
+Quoted form is a quotation mark followed by zero or more non-quote characters and terminated with another quotation mark. Newlines and other whitespace are permitted within the quoted text. A pair of quotation marks in the text is interpreted as a singe quotation mark in the value and does not terminate the value.
 
 ## The MetaTag Class
 
@@ -28,7 +27,7 @@ The MetaTag class includes static methods for encoding and decoding metatags and
 ## About MetaTag
 The software is distributed in C# as a [CodeBit](http://filemeta.org/CodeBit.html) located [here](https://raw.githubusercontent.com/FileMeta/MetaTag/master/MetaTag.cs). It is released under a [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause) open source license.
 
-MetaTag is part of the [FileMeta](http://www.filemeta.org/) initiative.
+MetaTag is part of the [FileMeta](http://www.filemeta.org/) project.
 
 This project includes the master copy of the [MetaTag.cs](https://raw.githubusercontent.com/FileMeta/MetaTag/master/MetaTag.cs) CodeBit plus a set of unit tests which may also serve as sample code.
 
