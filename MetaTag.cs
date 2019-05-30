@@ -65,43 +65,42 @@ namespace FileMeta
     /// <para>   &author=Brandt</para>
     /// <para>   &subject="MetaTag Format"</para>
     /// <para>   &date=2018-12-17T21:22:05-06:00</para>
+    /// <para>   &ref=https://en.wikipedia.org/wiki/Metadata</para>
     /// <para></para>
     /// <para>Format Definition:</para>
     /// <para>A metatag starts with an ampersand - just as a hashtag starts with the hash symbol.
     /// </para>
     /// <para>Next comes the name which follows the same standard as a hashtag - it must be composed
     /// of letters, numbers, and the underscore character. Rigorous implementations should use the
-    /// unicode character sets. Specifically Unicode categories: Ll, Lu, Lt, Lo, Lm, Mn, Nd, Pc. For
+    /// corresponding unicode character sets. Specifically, Unicode categories: Ll, Lu, Lt, Lo, Lm, Mn, Nd, Pc. For
     /// regular expressions this matches the \w chacter class.
     /// </para>
     /// <para>Next is an equals sign.
     /// </para>
-    /// <para>Next is the value which is a series of any characters except the ASCII control range (0x00
-    /// to 0x7F), space or the ampersand. Control characters, space, ampersand, underscore, and the percent
-    /// character MUST be encoded. A space character is encoded as the underscore. All other control,
-    /// ampersand, underscore, or percent characters are encoded as the percent character followed by two
-    /// hexadecimal digits. All characters requiring encoding are in the first 256 characters of Unicode, so
-    /// two hexadecimal digits are sufficient. Other Unicode characters are given by their literal value.
+    /// <para>Next is the value which may be in plain or quoted form. In plain form, the value is a series
+    /// of one or more non-whitespace and non-quote characters. The value is terminated by whitespace or
+    /// the end of the document.
     /// </para>
-    /// <para>The value encoding is deliberately similar to URL query string encoding. However, in
-    /// Metatag encoding, the underscore substitutes for a space whereas in URL query strings, the plus
-    /// sign substitutes for a space.
-    /// </para>
-    /// <para>The name IS NOT encoded. Valid names are simply limited to the specified character set.
+    /// <para>Quoted form is a quotation mark followed by zero or more non-quote characters and terminated
+    /// with another quotation mark. Newlines and other whitespace are permitted within the quoted text.
+    /// A pair of quotation marks in the text is interpreted as a singe quotation mark in the value.
     /// </para>
     /// </remarks>
     /// <seealso cref="MetaTagSet"/>
     static class MetaTag
     {
         /* Matches a metatag which is defined as follows:
-           &       An Ampersand
-           \w+     One or more "word characters" consisting of the unicode groups for
-                   letters numbers, nonspacing marks, numers (decimal digits), punctuation characters (underscore)
-           =       The equals sign
-           [^\s&]. Zero or more non-whitespace and non-ampersand characters.
+           &            An Ampersand
+           \w+          One or more "word characters" consisting of the unicode groups for
+                        letters, nonspacing marks, numbers (decimal digits), punctuation 
+                        characters (underscore)
+           =            The equals sign
+           [^\s"].\+    Plain form: One or more non-whitespace and non-quote characters.
+           (?:"[^"]*")+ Quoted form: Text surrounded by quote marks - possibly with
+                        embedded double-quotes
         */
 
-        const string metatagRegex = @"&(\w+)=([^ ""]+|(?:""[^""]*"")+)";
+        const string metatagRegex = @"&(\w+)=([^\s""]+|(?:""[^""]*"")+)";
 
         // Matches a metatag that composes the whole string
         static Regex s_rxSingleMetatag = new Regex(
