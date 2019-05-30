@@ -3,9 +3,9 @@
 name: MetaTag.cs
 description: CodeBit class for extracting and embedding metatags in text fields.
 url: https://raw.githubusercontent.com/FileMeta/MetaTag/master/MetaTag.cs
-version: 1.0
+version: 2.0
 keywords: CodeBit
-dateModified: 2019-01-23
+dateModified: 2019-05-29
 license: https://opensource.org/licenses/BSD-3-Clause
 # Metadata in MicroYaml format. See http://filemeta.org/CodeBit.html
 ...
@@ -63,7 +63,7 @@ namespace FileMeta
     /// </para>
     /// <para>Examples:</para>
     /// <para>   &author=Brandt</para>
-    /// <para>   &subject=MetaTag_Format</para>
+    /// <para>   &subject="MetaTag Format"</para>
     /// <para>   &date=2018-12-17T21:22:05-06:00</para>
     /// <para></para>
     /// <para>Format Definition:</para>
@@ -101,14 +101,16 @@ namespace FileMeta
            [^\s&]. Zero or more non-whitespace and non-ampersand characters.
         */
 
+        const string metatagRegex = @"&(\w+)=([^ ""]+|(?:""[^""]*"")+)";
+
         // Matches a metatag that composes the whole string
         static Regex s_rxSingleMetatag = new Regex(
-            @"^&(\w+)=([^\s&]*)$",
+            string.Concat("^", metatagRegex, "$"),
             RegexOptions.CultureInvariant);
 
         // Matches metatags that are embedded in a potentially longer string.
         static Regex s_rxEmbeddedMetatag = new Regex(
-            @"&(\w+)=([^\s&]*)",
+            metatagRegex,
             RegexOptions.CultureInvariant);
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace FileMeta
             KeyValuePair<string, string> result;
             if (!TryParse(s, out result))
             {
-                throw new ArgumentException("Parse failure: Invalid MetaTag String");
+                 throw new ArgumentException("Parse failure: Invalid MetaTag String");
             }
             return result;
         }
@@ -194,38 +196,31 @@ namespace FileMeta
             return $"&{pair.Key}={EncodeValue(pair.Value)}";
         }
 
+        static readonly char[] c_quoteRequiringChars = new char[]
+            {
+                '\r', '\n', '\t', ' ', '"'
+            };
+
         /// <summary>
         /// Encode a metatag value
         /// </summary>
         /// <param name="s">The value to encode.</param>
         /// <returns>The encoded value.</returns>
         /// <remarks>
-        /// <para>The encoded value portion of a metatag may not contain characters lower or equal to 0x1f, the space
-        /// character, percent, or the ampersand. Space characters are encoded as an underscore. The ampersand, percent,
-        /// underscore, and control characters are percent encoded as in URL query strings.
+        /// <para>If the text contains ASCII whitespace or a quote then it must be quoted.
+        /// Otherwise the value is unchanged.
         /// </para>
         /// </remarks>
         public static string EncodeValue(string s)
         {
-            var sb = new StringBuilder();
-            foreach (char c in s)
+            if (s.IndexOfAny(c_quoteRequiringChars) >= 0)
             {
-                if (c == ' ')
-                {
-                    sb.Append('_');
-                }
-                else if (c < '\x20' || c == '%' || c == '&' || c == '_')
-                {
-                    int n = (int)c;
-                    if (n > 255) n = 32; // In the unexpected case of whitespace outside the ASCII range.
-                    sb.Append($"%{n:x2}");
-                }
-                else
-                {
-                    sb.Append(c);
-                }
+                return string.Concat("\"", s.Replace("\"", "\"\""), "\"");
             }
-            return sb.ToString();
+            else
+            {
+                return s;
+            }
         }
 
         /// <summary>
@@ -239,34 +234,14 @@ namespace FileMeta
         /// </remarks>
         public static string DecodeValue(string s)
         {
-            var sb = new StringBuilder();
-            for (int i = 0; i < s.Length; ++i)
+            if (s.Length > 0 && s[0] == '"')
             {
-                char c = s[i];
-                if (c == '_')
-                {
-                    sb.Append(' ');
-                }
-                else if (c == '%' && i < s.Length + 2)
-                {
-                    int n;
-                    if (int.TryParse(s.Substring(i + 1, 2), System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture,
-                        out n) && n >= 0 && n < 256)
-                    {
-                        sb.Append((char)n);
-                        i += 2;
-                    }
-                    else
-                    {
-                        sb.Append('%');
-                    }
-                }
-                else
-                {
-                    sb.Append(c);
-                }
+                return s.Substring(1, s.Length - 2).Replace("\"\"", "\"");
             }
-            return sb.ToString();
+            else
+            {
+                return s;
+            }
         }
 
         /// <summary>
@@ -324,7 +299,7 @@ namespace FileMeta
 
             var sb = new StringBuilder();
             // Process existing string, suppressing any existing metatags
-            // that don't have values in the set and updating andy that do have values.
+            // that don't have values in the set and updating any that do have values.
             int p = 0;
             foreach (Match match in s_rxEmbeddedMetatag.Matches(s))
             {

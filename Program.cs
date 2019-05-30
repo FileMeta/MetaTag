@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FileMeta
 {
@@ -18,23 +16,22 @@ namespace FileMeta
                 Console.WriteLine("Testing EncodeValue.");
                 TestEncodeDecode(string.Empty, string.Empty);
                 TestEncodeDecode("Simple", "Simple");
-                TestEncodeDecode("Sentence with spaces.", "Sentence_with_spaces.");
-                TestEncodeDecode("\a\b\t\r\v\f\n\x1b", "%07%08%09%0d%0b%0c%0a%1b");
-                TestEncodeDecode("Underscore_Percent%And Ampersand&Get Encoded.", "Underscore%5fPercent%25And_Ampersand%26Get_Encoded.");
-                TestEncodeDecode("Unencoded Punctuation: !\"#$'()*+,-./:;<=>?@[\\]^`{|}~", "Unencoded_Punctuation:_!\"#$'()*+,-./:;<=>?@[\\]^`{|}~");
-                TestEncodeDecode(" Leading Space", "_Leading_Space");
-                TestEncodeDecode("&Leading Ampersand", "%26Leading_Ampersand");
-                TestEncodeDecode("\x00\x01\x02", "%00%01%02"); // Embedded null
+                TestEncodeDecode("Sentence with spaces.", "\"Sentence with spaces.\"");
+                TestEncodeDecode("\a\b\t\r\v\f\n\x1b", "\"\a\b\t\r\v\f\n\x1b\"");
+                TestEncodeDecode("Underscore_Percent%And-Ampersand&Not-Encoded.", "Underscore_Percent%And-Ampersand&Not-Encoded.");
+                TestEncodeDecode("Quotes\"Doubled", "\"Quotes\"\"Doubled\"");
+                TestEncodeDecode("Unencoded-Punctuation:!#$'()*+,-./:;<=>?@[\\]^`{|}~", "Unencoded-Punctuation:!#$'()*+,-./:;<=>?@[\\]^`{|}~");
+                TestEncodeDecode(" Leading Space", "\" Leading Space\"");
+                TestEncodeDecode("\x00\x01\x02", "\x00\x01\x02"); // Embedded null
 
                 Console.WriteLine();
                 Console.WriteLine("Testing DecodeValue.");
-                TestDecodeValue("Unnecessarily_percent_encoded:%41%3d%40", "Unnecessarily percent encoded:A=@");
-                TestDecodeValue("This_is_a_test.", "This is a test.");
+                TestDecodeValue("\"\"\"This is a test.\"\"\"", "\"This is a test.\"");
 
                 Console.WriteLine();
                 Console.WriteLine("Testing Parse and Format");
                 TestParseAndFormat("&name=value", "name", "value");
-                TestParseAndFormat("&complex_name=Encoded_Value_%26_Fun", "complex_name", "Encoded Value & Fun");
+                TestParseAndFormat("&complex_name=\"Encoded Value \"\"This\"\" is fun\"", "complex_name", "Encoded Value \"This\" is fun");
 
                 Console.WriteLine();
                 Console.WriteLine("Testing embedded extraction and update.");
@@ -134,17 +131,17 @@ namespace FileMeta
 
 
         const string c_embedded1 =
-@"This string &title=Test_MetaTag_Embedding contains embedded
-MetaTags. &subject=Unit_Test It is being used to test the extraction
+@"This string &title=""Test """"MetaTag"""" Embedding"" contains embedded
+MetaTags. &subject=""Unit Test"" It is being used to test the extraction
 and &date=2018-01-23T19:03:22 embedding of metatags in a
 &keywords=one;two;three continuous string of text.";
 
         const string c_normalized1 =
-@"&date=2018-01-23T19:03:22 &keywords=one;two;three &subject=Unit_Test &title=Test_MetaTag_Embedding";
+@"&date=2018-01-23T19:03:22 &keywords=one;two;three &subject=""Unit Test"" &title=""Test """"MetaTag"""" Embedding""";
 
         static readonly KeyValuePair<string, string>[] s_update1 = new KeyValuePair<string, string>[]
         {
-            new KeyValuePair<string, string>("title", "Test MetaTag Updated"),
+            new KeyValuePair<string, string>("title", "Test \"MetaTag\" Updated"),
             new KeyValuePair<string, string>("subject", null), // Should remove the text
             new KeyValuePair<string, string>("keywords", "a;b;c"),
             new KeyValuePair<string, string>("expires", "2020-01-01"),
@@ -153,13 +150,13 @@ and &date=2018-01-23T19:03:22 embedding of metatags in a
         };
 
         const string c_embedded2 =
-@"This string &title=Test_MetaTag_Updated contains embedded
+@"This string &title=""Test """"MetaTag"""" Updated"" contains embedded
 MetaTags. It is being used to test the extraction
 and &date=2018-01-23T19:03:22 embedding of metatags in a
-&keywords=a;b;c continuous string of text. &author=George_Orwell &expires=2020-01-01 &publisher=LightWave";
+&keywords=a;b;c continuous string of text. &author=""George Orwell"" &expires=2020-01-01 &publisher=LightWave";
 
         const string c_normalized2 =
-@"&author=George_Orwell &date=2018-01-23T19:03:22 &expires=2020-01-01 &keywords=a;b;c &publisher=LightWave &title=Test_MetaTag_Updated";
+@"&author=""George Orwell"" &date=2018-01-23T19:03:22 &expires=2020-01-01 &keywords=a;b;c &publisher=LightWave &title=""Test """"MetaTag"""" Updated""";
 
     }
 }
