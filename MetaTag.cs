@@ -1,21 +1,20 @@
 ﻿/*
----
-name: MetaTag.cs
-description: CodeBit class for extracting and embedding metatags in text fields.
-url: https://raw.githubusercontent.com/FileMeta/MetaTag/master/MetaTag.cs
-version: 2.0
-keywords: CodeBit
-dateModified: 2019-05-29
-license: https://opensource.org/licenses/BSD-3-Clause
-# Metadata in MicroYaml format. See http://filemeta.org/CodeBit.html
-...
+&name=MetaTag.cs
+&description="CodeBit class for extracting and embedding metatags in text fields."
+&url=https://raw.githubusercontent.com/FileMeta/MetaTag/master/MetaTag.cs
+&version=2.1
+&keywords=CodeBit
+&dateModified=2022-09-28
+&license=https://opensource.org/licenses/BSD-3-Clause
+
+See http://filemeta.org/CodeBit.html
 */
 
 /*
 === BSD 3 Clause License ===
 https://opensource.org/licenses/BSD-3-Clause
 
-Copyright 2019 Brandt Redd
+Copyright 2022 Brandt Redd
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:

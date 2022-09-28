@@ -8,7 +8,9 @@ Metatag Examples:
 * &date=2018-12-17T21:22:05-06:00
 * &references=https://en.wikipedia.org/wiki/Metadata
 
-## Format Definition
+## Format Summary
+
+Please see the [MetaTag Specification](https://www.filemeta.org/MetaTag) for a formal definition of the format.
 
 A metatag starts with an ampersand - just as a hashtag starts with the hash symbol.
 
@@ -32,4 +34,4 @@ MetaTag is part of the [FileMeta](http://www.filemeta.org/) project.
 This project includes the master copy of the [MetaTag.cs](https://raw.githubusercontent.com/FileMeta/MetaTag/master/MetaTag.cs) CodeBit plus a set of unit tests which may also serve as sample code.
 
 ## About CodeBits
-A [CodeBit](https://www.FileMeta.org/CodeBit.html) is very lightweight way to share common code. Each CodeBit consists of a single source code file. A structured comment at the beginning of the file indicates where to find the master copy so that automated tools can retrieve and update CodeBits to the latest version.
+A [CodeBit](https://www.FileMeta.org/CodeBit) is very lightweight way to share common code. Each CodeBit consists of a single source code file. A structured comment at the beginning of the file indicates where to find the master copy so that automated tools can retrieve and update CodeBits to the latest version.
