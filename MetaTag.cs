@@ -99,7 +99,7 @@ namespace FileMeta
                         embedded double-quotes
         */
 
-        const string metatagRegex = @"&(\w+)=([^\s""]+|(?:""[^""]*"")+)";
+        const string metatagRegex = @"&((?:\w+:)?\w+)=([^\s""]+|(?:""[^""]*"")+)";
 
         // Matches a metatag that composes the whole string
         static Regex s_rxSingleMetatag = new Regex(

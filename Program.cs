@@ -32,6 +32,7 @@ namespace FileMeta
                 Console.WriteLine("Testing Parse and Format");
                 TestParseAndFormat("&name=value", "name", "value");
                 TestParseAndFormat("&complex_name=\"Encoded Value \"\"This\"\" is fun\"", "complex_name", "Encoded Value \"This\" is fun");
+                TestParseAndFormat("&bcr:namespaced_name=value:with:colons", "bcr:namespaced_name", "value:with:colons");
 
                 Console.WriteLine();
                 Console.WriteLine("Testing embedded extraction and update.");
@@ -117,6 +118,8 @@ namespace FileMeta
             string u = MetaTag.EmbedAndUpdate(c_embedded1, s_update1);
             if (!string.Equals(u, c_embedded2))
             {
+                Console.WriteLine($"Expected: {c_embedded2}");
+                Console.WriteLine($"Found: {u}");
                 throw new ApplicationException("Failed Embedded Update");
             }
 
@@ -125,6 +128,8 @@ namespace FileMeta
             n = tagSet.EmbedAndUpdate(null);
             if (!string.Equals(n, c_normalized2))
             {
+                Console.WriteLine($"Expected: {c_normalized2}");
+                Console.WriteLine($"Found: {n}");
                 throw new ApplicationException("Failed Embedded Update and Normalize");
             }
         }
@@ -134,10 +139,10 @@ namespace FileMeta
 @"This string &title=""Test """"MetaTag"""" Embedding"" contains embedded
 MetaTags. &subject=""Unit Test"" It is being used to test the extraction
 and &date=2018-01-23T19:03:22 embedding of metatags in a
-&keywords=one;two;three continuous string of text.";
+&keywords=one;two;three continuous string &bcr:namespaced=""something else"" of text.";
 
         const string c_normalized1 =
-@"&date=2018-01-23T19:03:22 &keywords=one;two;three &subject=""Unit Test"" &title=""Test """"MetaTag"""" Embedding""";
+@"&bcr:namespaced=""something else"" &date=2018-01-23T19:03:22 &keywords=one;two;three &subject=""Unit Test"" &title=""Test """"MetaTag"""" Embedding""";
 
         static readonly KeyValuePair<string, string>[] s_update1 = new KeyValuePair<string, string>[]
         {
@@ -153,10 +158,10 @@ and &date=2018-01-23T19:03:22 embedding of metatags in a
 @"This string &title=""Test """"MetaTag"""" Updated"" contains embedded
 MetaTags. It is being used to test the extraction
 and &date=2018-01-23T19:03:22 embedding of metatags in a
-&keywords=a;b;c continuous string of text. &author=""George Orwell"" &expires=2020-01-01 &publisher=LightWave";
+&keywords=a;b;c continuous string &bcr:namespaced=""something else"" of text. &author=""George Orwell"" &expires=2020-01-01 &publisher=LightWave";
 
         const string c_normalized2 =
-@"&author=""George Orwell"" &date=2018-01-23T19:03:22 &expires=2020-01-01 &keywords=a;b;c &publisher=LightWave &title=""Test """"MetaTag"""" Updated""";
+@"&author=""George Orwell"" &bcr:namespaced=""something else"" &date=2018-01-23T19:03:22 &expires=2020-01-01 &keywords=a;b;c &publisher=LightWave &title=""Test """"MetaTag"""" Updated""";
 
     }
 }
