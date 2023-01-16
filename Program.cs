@@ -18,9 +18,9 @@ namespace FileMeta
                 TestEncodeDecode("Simple", "Simple");
                 TestEncodeDecode("Sentence with spaces.", "\"Sentence with spaces.\"");
                 TestEncodeDecode("\a\b\t\r\v\f\n\x1b", "\"\a\b\t\r\v\f\n\x1b\"");
-                TestEncodeDecode("Underscore_Percent%And-Ampersand&Not-Encoded.", "Underscore_Percent%And-Ampersand&Not-Encoded.");
+                TestEncodeDecode("Underscore_Percent%Not-Encoded.", "Underscore_Percent%Not-Encoded.");
                 TestEncodeDecode("Quotes\"Doubled", "\"Quotes\"\"Doubled\"");
-                TestEncodeDecode("Unencoded-Punctuation:!#$'()*+,-./:;<=>?@[\\]^`{|}~", "Unencoded-Punctuation:!#$'()*+,-./:;<=>?@[\\]^`{|}~");
+                TestEncodeDecode("Unencoded-Punctuation:!#$'()*+-./:<=>?@\\^`|~", "Unencoded-Punctuation:!#$'()*+-./:<=>?@\\^`|~");
                 TestEncodeDecode(" Leading Space", "\" Leading Space\"");
                 TestEncodeDecode("\x00\x01\x02", "\x00\x01\x02"); // Embedded null
 
@@ -139,16 +139,16 @@ namespace FileMeta
 @"This string &title=""Test """"MetaTag"""" Embedding"" contains embedded
 MetaTags. &subject=""Unit Test"" It is being used to test the extraction
 and &date=2018-01-23T19:03:22 embedding of metatags in a
-&keywords=one;two;three continuous string &bcr:namespaced=""something else"" of text.";
+&keywords=one|two|three continuous string &bcr:namespaced=""something else"" of text.";
 
         const string c_normalized1 =
-@"&bcr:namespaced=""something else"" &date=2018-01-23T19:03:22 &keywords=one;two;three &subject=""Unit Test"" &title=""Test """"MetaTag"""" Embedding""";
+@"&bcr:namespaced=""something else"" &date=2018-01-23T19:03:22 &keywords=one|two|three &subject=""Unit Test"" &title=""Test """"MetaTag"""" Embedding""";
 
         static readonly KeyValuePair<string, string>[] s_update1 = new KeyValuePair<string, string>[]
         {
             new KeyValuePair<string, string>("title", "Test \"MetaTag\" Updated"),
             new KeyValuePair<string, string>("subject", null), // Should remove the text
-            new KeyValuePair<string, string>("keywords", "a;b;c"),
+            new KeyValuePair<string, string>("keywords", "a|b|c"),
             new KeyValuePair<string, string>("expires", "2020-01-01"),
             new KeyValuePair<string, string>("author", "George Orwell"),
             new KeyValuePair<string, string>("publisher", "LightWave")
@@ -158,10 +158,10 @@ and &date=2018-01-23T19:03:22 embedding of metatags in a
 @"This string &title=""Test """"MetaTag"""" Updated"" contains embedded
 MetaTags. It is being used to test the extraction
 and &date=2018-01-23T19:03:22 embedding of metatags in a
-&keywords=a;b;c continuous string &bcr:namespaced=""something else"" of text. &author=""George Orwell"" &expires=2020-01-01 &publisher=LightWave";
+&keywords=a|b|c continuous string &bcr:namespaced=""something else"" of text. &author=""George Orwell"" &expires=2020-01-01 &publisher=LightWave";
 
         const string c_normalized2 =
-@"&author=""George Orwell"" &bcr:namespaced=""something else"" &date=2018-01-23T19:03:22 &expires=2020-01-01 &keywords=a;b;c &publisher=LightWave &title=""Test """"MetaTag"""" Updated""";
+@"&author=""George Orwell"" &bcr:namespaced=""something else"" &date=2018-01-23T19:03:22 &expires=2020-01-01 &keywords=a|b|c &publisher=LightWave &title=""Test """"MetaTag"""" Updated""";
 
     }
 }

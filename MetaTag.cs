@@ -196,7 +196,7 @@ namespace FileMeta
 
         static readonly char[] c_quoteRequiringChars = new char[]
             {
-                '\r', '\n', '\t', ' ', '"'
+                '\r', '\n', '\t', ' ', '"', ';', '[', ']', '{', '}', '&', ','
             };
 
         /// <summary>
